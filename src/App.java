@@ -1,4 +1,8 @@
 public class App {
+
+    public static final String BG_WHITE = "\u001B[47m"; // Blanco para fondo
+    public static final String RESET = "\u001B[0m"; // Resetear color
+
     public static void main(String[] args) throws Exception {
         menu();
         int eleccion = Integer.parseInt(System.console().readLine(" -> "));
@@ -259,9 +263,10 @@ public class App {
                                     }
                                 }
 
-                            }System.out.println();
+                            }
+                            System.out.println();
                         }
-                        
+
                         salir = true;
 
                     } else {
@@ -300,20 +305,148 @@ public class App {
                 } while (!salir);
                 break;
 
+            case 7:
+
+                contador = 0;
+                String[][] tablero = new String[10][10];
+
+                Character numeracion = '8';
+                Character letras = 'a';
+
+                int alfilX = tablero[0].length/2;
+                int alfilY = tablero.length/2; 
+
+                salir = true;
+
+                String BLANCO = BG_WHITE + "  " + RESET;
+                String NEGRO = "  ";
+
+                String posicion = "";
+
+                for (int i = 0; i < tablero.length; i++) {
+                    for (int j = 0; j < tablero[0].length; j++) {
+                        if (i == 0 || i == tablero.length - 1) {
+
+                            if (j == 0 || j == tablero[0].length - 1)
+                                tablero[i][j] = " ";
+                            else {
+                                tablero[i][j] = letras + " ";
+                                letras++;
+                            }
+
+                            if (j == tablero[0].length - 1) {
+                                letras = 'a';
+                            }
+
+                        }
+
+                        else if (j == 0 || j == tablero[0].length - 1) {
+                            tablero[i][j] = numeracion + "";
+                            if (j == tablero[0].length - 1)
+                                numeracion--;
+                        }
+
+                        else {
+                            tablero[i][j] = (contador % 2 == 0) ? BLANCO : NEGRO;
+                            contador++;
+                            if (contador > 7 && i % 2 != 0)
+                                contador = 1;
+                            else if (contador > 8 && i % 2 == 0)
+                                contador = 0;
+                        }
+                    }
+                }
+
+                System.out.println("Imprimiendo tablero");
+                imprimirArrayBidiStr(tablero);
+
+                
+
+                do{
+
+                    posicion = System.console().readLine("Introduzca la posición del alfil: ");
+
+                    alfilX = (int)posicion.charAt(0)-96;
+                    alfilY = 9 - ((int)posicion.charAt(1)-48);
+                    
+
+                    for (int i = 0; i < tablero.length; i++) {
+                        for (int j = 0; j < tablero[0].length; j++) {
+                            if ((Math.abs(alfilX - j) == Math.abs(alfilY-i))&&(!(alfilX == j && alfilY == i)) 
+                            && ((i != 0 && i != tablero.length-1) && (j != 0 && j != tablero[0].length-1))){
+                                if (tablero[i][j] == BLANCO){
+                                    tablero[i][j] = BG_WHITE + "º " + RESET;
+                                } else{
+                                    tablero[i][j] = "º ";
+                                }
+                            }
+                            else if (alfilX == j && alfilY == i){
+                                if (tablero[i][j] == BLANCO){
+                                    tablero[i][j] = BG_WHITE + "/ " + RESET;
+                                } else {
+                                    tablero[i][j] = "/ ";
+                                }
+                            }
+                        }
+                    }
+
+                    imprimirArrayBidiStr(tablero);
+
+                numeracion = '8';
+                letras = 'a';
+
+                    for (int i = 0; i < tablero.length; i++) {
+                    for (int j = 0; j < tablero[0].length; j++) {
+                        if (i == 0 || i == tablero.length - 1) {
+
+                            if (j == 0 || j == tablero[0].length - 1)
+                                tablero[i][j] = " ";
+                            else {
+                                tablero[i][j] = letras + " ";
+                                letras++;
+                            }
+
+                            if (j == tablero[0].length - 1) {
+                                letras = 'a';
+                            }
+
+                        }
+
+                        else if (j == 0 || j == tablero[0].length - 1) {
+                            tablero[i][j] = numeracion + "";
+                            if (j == tablero[0].length - 1)
+                                numeracion--;
+                        }
+
+                        else {
+                            tablero[i][j] = (contador % 2 == 0) ? BLANCO : NEGRO;
+                            contador++;
+                            if (contador > 7 && i % 2 != 0)
+                                contador = 1;
+                            else if (contador > 8 && i % 2 == 0)
+                                contador = 0;
+                        }
+                    }
+                }
+                    
+
+                }while(salir);
+
+                break;
+
             default:
                 System.out.println("Número no válido!!!");
 
                 break;
         }
-
     }
 
     public static void menu() {
         System.out.println("""
                   EJERCICIOS ARRAYS BIDIMENSIONALES
                 ====================================
-                1 EJERCICIO 1 | 6 BUSCA MINAS |
-                2 EJERCICIO 2 |
+                1 EJERCICIO 1 | 6 BUSCA MINAS   |
+                2 EJERCICIO 2 | 7 ALFIL AJEDREZ |
                 3 EJERCICIO 3 |
                 4 EJERCICIO 4 |
                 5 EJERCICIO 5 |
@@ -324,6 +457,15 @@ public class App {
         for (int i = 0; i < array.length; i++) {
             for (int j = 0; j < array[0].length; j++) {
                 System.out.print(array[i][j] + "   |   ");
+            }
+            System.out.println();
+        }
+    }
+
+    public static void imprimirArrayBidiStr(String[][] array) {
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[0].length; j++) {
+                System.out.print(array[i][j]);
             }
             System.out.println();
         }
