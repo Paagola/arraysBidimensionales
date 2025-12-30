@@ -313,8 +313,8 @@ public class App {
                 Character numeracion = '8';
                 Character letras = 'a';
 
-                int alfilX = tablero[0].length/2;
-                int alfilY = tablero.length/2; 
+                int alfilX = tablero[0].length / 2;
+                int alfilY = tablero.length / 2;
 
                 salir = true;
 
@@ -360,28 +360,25 @@ public class App {
                 System.out.println("Imprimiendo tablero");
                 imprimirArrayBidiStr(tablero);
 
-                
-
-                do{
+                do {
 
                     posicion = System.console().readLine("Introduzca la posición del alfil: ");
 
-                    alfilX = (int)posicion.charAt(0)-96;
-                    alfilY = 9 - ((int)posicion.charAt(1)-48);
-                    
+                    alfilX = (int) posicion.charAt(0) - 96;
+                    alfilY = 9 - ((int) posicion.charAt(1) - 48);
 
                     for (int i = 0; i < tablero.length; i++) {
                         for (int j = 0; j < tablero[0].length; j++) {
-                            if ((Math.abs(alfilX - j) == Math.abs(alfilY-i))&&(!(alfilX == j && alfilY == i)) 
-                            && ((i != 0 && i != tablero.length-1) && (j != 0 && j != tablero[0].length-1))){
-                                if (tablero[i][j] == BLANCO){
+                            if ((Math.abs(alfilX - j) == Math.abs(alfilY - i)) && (!(alfilX == j && alfilY == i))
+                                    && ((i != 0 && i != tablero.length - 1)
+                                            && (j != 0 && j != tablero[0].length - 1))) {
+                                if (tablero[i][j] == BLANCO) {
                                     tablero[i][j] = BG_WHITE + "º " + RESET;
-                                } else{
+                                } else {
                                     tablero[i][j] = "º ";
                                 }
-                            }
-                            else if (alfilX == j && alfilY == i){
-                                if (tablero[i][j] == BLANCO){
+                            } else if (alfilX == j && alfilY == i) {
+                                if (tablero[i][j] == BLANCO) {
                                     tablero[i][j] = BG_WHITE + "/ " + RESET;
                                 } else {
                                     tablero[i][j] = "/ ";
@@ -392,45 +389,192 @@ public class App {
 
                     imprimirArrayBidiStr(tablero);
 
-                numeracion = '8';
-                letras = 'a';
+                    numeracion = '8';
+                    letras = 'a';
 
                     for (int i = 0; i < tablero.length; i++) {
-                    for (int j = 0; j < tablero[0].length; j++) {
-                        if (i == 0 || i == tablero.length - 1) {
+                        for (int j = 0; j < tablero[0].length; j++) {
+                            if (i == 0 || i == tablero.length - 1) {
 
-                            if (j == 0 || j == tablero[0].length - 1)
-                                tablero[i][j] = " ";
+                                if (j == 0 || j == tablero[0].length - 1)
+                                    tablero[i][j] = " ";
+                                else {
+                                    tablero[i][j] = letras + " ";
+                                    letras++;
+                                }
+
+                                if (j == tablero[0].length - 1) {
+                                    letras = 'a';
+                                }
+
+                            }
+
+                            else if (j == 0 || j == tablero[0].length - 1) {
+                                tablero[i][j] = numeracion + "";
+                                if (j == tablero[0].length - 1)
+                                    numeracion--;
+                            }
+
                             else {
-                                tablero[i][j] = letras + " ";
-                                letras++;
+                                tablero[i][j] = (contador % 2 == 0) ? BLANCO : NEGRO;
+                                contador++;
+                                if (contador > 7 && i % 2 != 0)
+                                    contador = 1;
+                                else if (contador > 8 && i % 2 == 0)
+                                    contador = 0;
                             }
-
-                            if (j == tablero[0].length - 1) {
-                                letras = 'a';
-                            }
-
-                        }
-
-                        else if (j == 0 || j == tablero[0].length - 1) {
-                            tablero[i][j] = numeracion + "";
-                            if (j == tablero[0].length - 1)
-                                numeracion--;
-                        }
-
-                        else {
-                            tablero[i][j] = (contador % 2 == 0) ? BLANCO : NEGRO;
-                            contador++;
-                            if (contador > 7 && i % 2 != 0)
-                                contador = 1;
-                            else if (contador > 8 && i % 2 == 0)
-                                contador = 0;
                         }
                     }
-                }
-                    
 
-                }while(salir);
+                } while (salir);
+
+                break;
+
+            // EJERCICIO 8
+            case 8:
+
+                int[][] array8 = crearArrayBidi(8, 8, 100);
+
+                imprimirArrayInt(array8);
+
+                int n = array8.length; // Suponemos matriz cuadrada 8x8
+                int totalCapas = n / 2; // En 8x8 hay 4 capas
+
+                // 1. ITERAMOS POR CADA CAPA (desde fuera hacia dentro)
+                for (int capa = 0; capa < totalCapas; capa++) {
+
+                    // Definimos los límites de esta capa específica
+                    int tope = capa;
+                    int fondo = n - 1 - capa;
+                    int izquierda = capa;
+                    int derecha = n - 1 - capa;
+
+                    // Calculamos el tamaño de este anillo: 2*(ancho + alto) - 4 esquinas
+                    int anchoActual = (derecha - izquierda + 1);
+                    int tamañoAnillo = (anchoActual * 4) - 4;
+
+                    int[] linea = new int[tamañoAnillo];
+                    int idx = 0;
+
+                    // ---------------------------------------------------------
+                    // PASO 1: EXTRAER DATOS (Aplanamos el anillo)
+                    // ---------------------------------------------------------
+
+                    // A. Lado Superior (Izquierda a Derecha) -> [tope][c]
+                    // Ojo: vamos hasta derecha-1 para no repetir la esquina en el siguiente bucle
+                    for (int c = izquierda; c < derecha; c++) {
+                        linea[idx++] = array8[tope][c];
+                    }
+
+                    // B. Lado Derecho (Arriba a Abajo) -> [r][derecha]
+                    for (int r = tope; r < fondo; r++) {
+                        linea[idx++] = array8[r][derecha];
+                    }
+
+                    // C. Lado Inferior (Derecha a Izquierda) -> [fondo][c]
+                    for (int c = derecha; c > izquierda; c--) {
+                        linea[idx++] = array8[fondo][c];
+                    }
+
+                    // D. Lado Izquierdo (Abajo a Arriba) -> [r][izquierda]
+                    for (int r = fondo; r > tope; r--) {
+                        linea[idx++] = array8[r][izquierda];
+                    }
+
+                    // ---------------------------------------------------------
+                    // PASO 2: MOVER A LA DERECHA (Tu función)
+                    // ---------------------------------------------------------
+                    linea = moverALaDerecha(linea);
+
+                    // ---------------------------------------------------------
+                    // PASO 3: INSERTAR DATOS DE NUEVO (Mismo orden que extracción)
+                    // ---------------------------------------------------------
+                    idx = 0;
+
+                    // A. Lado Superior
+                    for (int c = izquierda; c < derecha; c++)
+                        array8[tope][c] = linea[idx++];
+
+                    // B. Lado Derecho
+                    for (int r = tope; r < fondo; r++)
+                        array8[r][derecha] = linea[idx++];
+
+                    // C. Lado Inferior
+                    for (int c = derecha; c > izquierda; c--)
+                        array8[fondo][c] = linea[idx++];
+
+                    // D. Lado Izquierdo
+                    for (int r = fondo; r > tope; r--)
+                        array8[r][izquierda] = linea[idx++];
+                }
+                System.out.println("""
+
+                        -----------------------------
+                            """);
+
+                imprimirArrayInt(array8);
+
+                break;
+
+            case 9: // EJERCICIO 9
+
+                String[][] array9 = new String[7][7];
+
+                for (int i = 0; i < array9.length; i++) {
+                    for (int j = 0; j < array9[0].length; j++) {
+
+                        if (i == 0 || i == array9.length - 1 || i % 2 == 0)
+                            if (j == 0 || j == array9[0].length - 1)
+                                array9[i][j] = "▓▓";
+                            else if (j % 2 != 0)
+                                array9[i][j] = "▓▓▓";
+                            else
+                                array9[i][j] = "▓";
+
+                        else if (j == 0 || j == array9[0].length - 1)
+                            array9[i][j] = "▓▓";
+                        else if (j % 2 == 0)
+                            array9[i][j] = "▓";
+                        else
+                            array9[i][j] = "   ";
+                    }
+                }
+
+                boolean correcto = false;
+                salir = false;
+                while (!salir) {
+                    
+                    iprimir3enRaya(array9);
+                    String coordenadas = "";
+                    do{
+                        coordenadas = System.console().readLine("Introduzca coordenadas, por ejemplo b2: ");
+                    }while(!coordenadaCorrecta(array9, coordenadas));
+
+                    int cordenadaY = coordenadas.charAt(1)- 48;
+                    int cordenadaX = coordenadas.charAt(0) - 96;
+
+                    cordenadaX = (4 - cordenadaX) * 2 - 1;
+                    cordenadaY = (cordenadaY * 2) - 1;
+                    
+                    array9[cordenadaX][cordenadaY] = " X ";
+
+                    int cordYRandom = 0;
+                    int cordXRandom = 0;
+
+                    do{
+                        cordXRandom = (int)(Math.random()*4);
+                        cordYRandom = (int)(Math.random()*4);
+                        cordYRandom = (cordYRandom * 2) - 1;
+                        cordXRandom = (4 - cordXRandom) * 2 - 1;
+                        if (array9[cordXRandom][cordYRandom].equals("   ")){
+                            correcto = true;
+                        }
+                    }while(!correcto);
+                    correcto = false;
+
+                    array9[cordYRandom][cordXRandom] = " o ";
+                    
+                }
 
                 break;
 
@@ -447,8 +591,8 @@ public class App {
                 ====================================
                 1 EJERCICIO 1 | 6 BUSCA MINAS   |
                 2 EJERCICIO 2 | 7 ALFIL AJEDREZ |
-                3 EJERCICIO 3 |
-                4 EJERCICIO 4 |
+                3 EJERCICIO 3 | 8 EJERCICIO 8   |
+                4 EJERCICIO 4 | 9 EJERCICIO 9   |
                 5 EJERCICIO 5 |
                 """);
     }
@@ -462,6 +606,15 @@ public class App {
         }
     }
 
+    public static void imprimirArrayInt(int[][] array) {
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[0].length; j++) {
+                System.out.print(array[i][j] + ((array[i][j] < 10) ? "   " : "  "));
+            }
+            System.out.println();
+        }
+    }
+
     public static void imprimirArrayBidiStr(String[][] array) {
         for (int i = 0; i < array.length; i++) {
             for (int j = 0; j < array[0].length; j++) {
@@ -469,6 +622,18 @@ public class App {
             }
             System.out.println();
         }
+    }
+
+    public static int[] moverALaDerecha(int[] array) {
+        int aux = array[array.length - 1];
+        int aux2;
+
+        for (int i = 0; i < array.length; i++) {
+            aux2 = array[i];
+            array[i] = aux;
+            aux = aux2;
+        }
+        return array;
     }
 
     public static int[][] crearArrayBidi(int filas, int columnas, int hasta) {
@@ -492,5 +657,38 @@ public class App {
             }
         }
         return false;
+    }
+
+    public static void iprimir3enRaya(String[][] array) {
+        Character letras = 'c';
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array.length; j++) {
+                if (i % 2 != 0 && j == 0) {
+                    System.out.print(letras + " " + array[i][j]);
+                    letras--;
+                } else if (j == 0)
+                    System.out.print("  " + array[i][j]);
+                else
+                    System.out.print(array[i][j]);
+            }
+            System.out.println();
+        }
+        System.out.println("     1   2   3");
+    }
+
+    public static boolean coordenadaCorrecta(String[][] array9, String coordenada){
+        int cordenadaY = coordenada.charAt(0)- 96;
+        int cordenadaX = coordenada.charAt(1) - 48;
+
+        cordenadaX = (4 - cordenadaX) * 2 - 1;
+        cordenadaY = (4 - cordenadaY) * 2 - 1;
+
+
+        if (array9[cordenadaY][cordenadaX].equals("▓")
+        || array9[cordenadaY][cordenadaX].equals("▓▓")
+        || array9[cordenadaY][cordenadaX].equals("▓▓▓"))
+            return false;
+        else
+            return true;
     }
 }
